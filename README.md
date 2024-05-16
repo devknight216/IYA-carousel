@@ -1,70 +1,116 @@
-# Getting Started with Create React App
+# Custom Carousel Implementation
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project provides a custom carousel implementation built with React and Tailwind CSS. It ensures web accessibility by adding ARIA roles and properties, keyboard navigation, and other accessibility features.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+1. Responsive Design: The carousel adjusts its layout based on the screen size.
 
-### `npm start`
+2. Keyboard Navigation: Users can navigate through the carousel using the left and right arrow keys.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+3. Accessibility: Implements ARIA roles and properties for improved accessibility.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Assumptions
 
-### `npm test`
+1. The returned data contains an array of items.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+2. The first item in the data is for "explore", while the other items are normal carousel items.
 
-### `npm run build`
+## Getting Started
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Prerequisites
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- Node.js (v18 or later)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- npm (v8 or later)
 
-### `npm run eject`
+### Installation
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+1. Clone the repository:
+```
+git clone https://github.com/devknight216/IYA-carousel.git
+cd IYA-carousel
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+2. Install dependencies:
+```
+npm install
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+3. Start the development server:
+```
+npm start
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Usage
 
-## Learn More
+To use the carousel component, pass the fetched data as props to the `Carousel` component.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Example:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```
+import React, { useState, useEffect } from 'react';
+import Carousel from './components/Carousel';
+import config from './config';
 
-### Code Splitting
+function App() {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+  const fetchData = async () => {
+    try {
+      const response = await fetch(`${config.API_URL}/ext/search?type=technicalTaskCarouselItem&env=dev`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+      const data = await response.json();
+      setItems(data.reverse());
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-### Analyzing the Bundle Size
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
-### Making a Progressive Web App
+  return (
+    <div className="App">
+      <Carousel items={items} />
+      <footer className="bg-[#071c29] text-center p-4">
+        <div className="flex justify-end items-center space-x-2">
+          <p className="text-white text-md">in partnership with</p>
+          <img 
+            src={config.LOGO_URL}
+            alt="Logo"
+            className="mx-auto h-10"
+          />
+        </div>
+      </footer>
+    </div>
+  );
+}
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+export default App;
 
-### Advanced Configuration
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## Potential Improvements
 
-### Deployment
+### TypeScript Support
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+For better static typing and type safety, it is recommended to use TypeScript in the project.
 
-### `npm run build` fails to minify
+### Unit Testing
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+It is good practice to write test cases before building the components. Jest and React Testing Library can be used for unit testing the components.
+
+### Add Mouse and Touch Event Handlers
+
+Implement mouse dragging and touch swiping handlers to improve the usability of the carousel on mobile devices.
