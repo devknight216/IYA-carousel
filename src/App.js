@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import Carousel from './components/Carousel';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import config from './config';
+
+const Carousel = lazy(() => import('./components/Carousel'));
 
 function App() {
   const [items, setItems] = useState([]);
@@ -24,7 +25,9 @@ function App() {
 
   return (
     <div className="App">
-      <Carousel items={items} />
+      <Suspense fallback={<div>Loading...</div>}>
+        <Carousel items={items} />
+      </Suspense>
       <footer className="bg-[#071c29] text-center p-4">
         <div className='flex justify-end items-center space-x-2'>
           <p className="text-white text-md">in partnership with</p>
