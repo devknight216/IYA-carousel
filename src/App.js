@@ -24,7 +24,7 @@ function App() {
 
   return (
     <div className="App">
-      {/* <Carousel items={items} /> */}
+      <Carousel items={items} />
       <footer className="bg-[#071c29] text-center p-4">
         <div className='flex justify-end items-center space-x-2'>
           <p className="text-white text-md">in partnership with</p>
